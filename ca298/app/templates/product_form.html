@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Form
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+    <div class="container">
+        <h1 class="title">
+            Form
+        </h1>
+    </div>
+    <br>
+    <div class="container">
+        <p class="subtitle">
+            <form action="/productform" method="post">
+                {% csrf_token %}
+                {{ form.as_table }}
+                <input type="submit" value="Submit">
+            </form>
+        </p>
+    </div>
+    </section>
+{% endblock %}

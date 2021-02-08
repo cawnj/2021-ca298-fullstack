@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Products
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+    <div class="container">
+        <h1 class="title">
+            Products
+        </h1>
+    </div>
+    <br>
+    <div class="container">
+    {% for p in products %}
+        <p class="subtitle">
+            Name: {{ p.name }}<br>
+            Description: {{ p.description }}<br>
+            Price: {{ p.price }}<br>
+        </p>
+    {% endfor %}
+    </div>
+    </section>
+{% endblock %}
