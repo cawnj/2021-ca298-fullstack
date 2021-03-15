@@ -5,6 +5,8 @@ from .forms import *
 from django.views.generic import CreateView
 from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
+from .permissions import admin_required
 
 # Create your views here.
 
@@ -63,7 +65,8 @@ def single_product(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     return render(request, 'single_product.html', { 'product': product })
 
-
+@login_required
+@admin_required
 def product_form(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
