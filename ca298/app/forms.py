@@ -8,7 +8,7 @@ from django import forms
 class ProductForm(ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price']
+        fields = ['name', 'description', 'price', 'picture']
 
 
 class CaSignupForm(UserCreationForm):

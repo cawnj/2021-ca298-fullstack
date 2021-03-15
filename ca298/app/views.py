@@ -65,14 +65,15 @@ def single_product(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     return render(request, 'single_product.html', { 'product': product })
 
+
 @login_required
 @admin_required
 def product_form(request):
     if request.method == 'POST':
-        form = ProductForm(request.POST)
+        form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             new_product = form.save()
-            return render(request, 'single_product.html', { 'product': new_product })
+            return redirect('/product/' + str(new_product.id))
     else:
         form = ProductForm()
         return render(request, 'product_form.html', { 'form': form })
