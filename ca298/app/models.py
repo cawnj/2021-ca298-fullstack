@@ -4,12 +4,18 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 
+class ProductCategory(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+
+
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=500)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     picture = models.FileField(upload_to='product_img/', blank=True)
+    category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
 
 
 class Order(models.Model):

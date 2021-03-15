@@ -5,19 +5,17 @@
 {% endblock %}
 
 {% block content %}
-    <section class="section">
-    <div class="container">
-        <h1 class="title">
-            {{ product.name }}
-        </h1>
-    </div>
+    <h1 class="title">
+        {{ product.name }}
+    </h1>
     <br>
     <div class="container">
         <p class="subtitle">
             Name: {{ product.name }}<br>
             Description: {{ product.description }}<br>
             Price: {{ product.price }}<br>
+            Category: {{ product.category.name }}<br>
+            <img src="{{ product.picture.url }}"><br>
         </p>
     </div>
-    </section>
 {% endblock %}

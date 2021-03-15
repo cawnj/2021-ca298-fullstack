@@ -5,21 +5,19 @@
 {% endblock %}
 
 {% block content %}
-    <section class="section">
-    <div class="container">
-        <h1 class="title">
-            Products
-        </h1>
-    </div>
+    <h1 class="title">
+        Products
+    </h1>
     <br>
     <div class="container">
-    {% for p in products %}
+    {% for product in products %}
         <p class="subtitle">
-            Name: {{ p.name }}<br>
-            Description: {{ p.description }}<br>
-            Price: {{ p.price }}<br>
+            Name: {{ product.name }}<br>
+            Description: {{ product.description }}<br>
+            Price: {{ product.price }}<br>
+            Category: {{ product.category.name }}<br>
+            <img src="{{ product.picture.url }}"><br>
         </p>
     {% endfor %}
     </div>
-    </section>
 {% endblock %}
