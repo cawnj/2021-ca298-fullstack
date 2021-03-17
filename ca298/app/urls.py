@@ -12,4 +12,6 @@ urlpatterns = [
     path('adminsignup/', views.AdminSignupView.as_view(), name="admin_signup"),
     path('login/', views.Login.as_view(template_name="login.html", authentication_form=UserLoginForm), name="login"),
     path('logout/', views.logout_view, name="logout"),
+    path('addbasket/<int:product_id>', views.add_to_basket, name="add_to_basket"),
+    path('basket/', views.view_basket, name="view_basket"),
 ]

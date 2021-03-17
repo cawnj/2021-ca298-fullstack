@@ -6,20 +6,19 @@
 
 {% block content %}
     <h1 class="title">
-        {{ product.name }}
+        Shopping Basket
     </h1>
-    {% if added %}
-        <p><b>Added product</b></p>
-    {% endif %}
     <br>
     <div class="container">
+    {% for product, quantity in sb_products.items %}
         <p class="subtitle">
+            Quantity: {{ quantity }}<br>
             Name: {{ product.name }}<br>
             Description: {{ product.description }}<br>
+            Price: {{ product.price }}<br>
             Category: {{ product.category.name }}<br>
-            Price: {{ product.price }}<br><br>
-            <a href="/addbasket/{{ product.id }}" class="button">BUY NOW</a><br><br>
             <img src="{{ product.picture.url }}"><br>
         </p>
+    {% endfor %}
     </div>
 {% endblock %}

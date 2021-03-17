@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product, CaUser
+from .models import Product, CaUser, ShoppingBasket, ShoppingBasketItems
 from .forms import *
 from django.views.generic import CreateView
 from django.contrib.auth import login, logout
@@ -77,3 +77,31 @@ def product_form(request):
     else:
         form = ProductForm()
         return render(request, 'product_form.html', { 'form': form })
+
+
+@login_required
+def add_to_basket(request, product_id):
+    user = request.user
+    shopping_basket = ShoppingBasket.objects.filter(user_id=user).first()
+    if not shopping_basket:
+        shopping_basket = ShoppingBasket(user_id=user).save()
+    # TODO: handle product id gracefully
+    product = Product.objects.get(pk=product_id)
+    sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id, product_id=product.id).first()
+    if not sbi:
+        sbi = ShoppingBasketItems(basket_id=shopping_basket.id, product_id=product.id).save()
+    else:
+        sbi.quantity += 1
+        sbi.save()
+    return render(request, 'single_product.html', { 'product': product, 'added': True })
+
+
+@login_required
+def view_basket(request):
+    shopping_basket = ShoppingBasket.objects.filter(user_id=request.user.id).first()
+    shopping_basket_items = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
+    sb_products = {}
+    for item in shopping_basket_items:
+        product = Product.objects.filter(id=item.product_id).first()
+        sb_products[product] = item.quantity
+    return render(request, 'shopping_basket.html', { 'sb_products': sb_products })
