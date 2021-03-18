@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product, CaUser, ShoppingBasket, ShoppingBasketItems
+from .models import *
 from .forms import *
 from django.views.generic import CreateView
 from django.contrib.auth import login, logout
@@ -106,3 +106,25 @@ def view_basket(request):
         product = Product.objects.filter(id=item.product_id).first()
         sb_products[product] = item.quantity
     return render(request, 'shopping_basket.html', { 'sb_products': sb_products })
+
+
+@login_required
+def checkout(request):
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if not form.is_valid():
+            return HttpResponse("invalid form!")
+        order = form.save(commit=False)
+        order.user_id = request.user.id
+        order.save()
+
+        shopping_basket = ShoppingBasket.objects.filter(user_id=request.user.id).first()
+        shopping_basket_items = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
+        for item in shopping_basket_items:
+            order_item = OrderItems(order_id=order.id, product_id=item.product_id, quantity=item.quantity)
+            order_item.save()
+        shopping_basket.delete()
+        return HttpResponse("order complete!")
+    else:
+        form = OrderForm()
+        return render(request, 'checkout.html', { 'form': form })
