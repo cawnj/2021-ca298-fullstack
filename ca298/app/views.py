@@ -82,10 +82,11 @@ def product_form(request):
 @login_required
 def add_to_basket(request, product_id):
     user = request.user
-    shopping_basket = ShoppingBasket.objects.filter(user_id=user).first()
+    shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
     if not shopping_basket:
-        shopping_basket = ShoppingBasket(user_id=user).save()
+        shopping_basket = ShoppingBasket(user_id=user.id).save()
     # TODO: handle product id gracefully
+    shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
     product = Product.objects.get(pk=product_id)
     sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id, product_id=product.id).first()
     if not sbi:

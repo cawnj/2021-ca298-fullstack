@@ -1,5 +1,5 @@
 from django.forms import ModelForm, ModelChoiceField
-from .models import Product, CaUser, ProductCategory
+from .models import Product, CaUser, ProductCategory, Order
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.db import transaction
 from django import forms
@@ -16,6 +16,12 @@ class ProductForm(ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'description', 'price', 'picture', 'category']
+
+
+class OrderForm(ModelForm):
+    class Meta:
+        model = Order
+        fields = ['shipping_addr', 'payment_details']
 
 
 class CaSignupForm(UserCreationForm):
