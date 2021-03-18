@@ -124,7 +124,17 @@ def checkout(request):
             order_item = OrderItems(order_id=order.id, product_id=item.product_id, quantity=item.quantity)
             order_item.save()
         shopping_basket.delete()
-        return HttpResponse("order complete!")
+        return redirect('/order_complete/' + str(order.id))
     else:
         form = OrderForm()
         return render(request, 'checkout.html', { 'form': form })
+
+
+@login_required
+def order_complete(request, order_id):
+    order_items = OrderItems.objects.filter(order_id=order_id)
+    order_products = {}
+    for item in order_items:
+        product = Product.objects.filter(id=item.product_id).first()
+        order_products[product] = item.quantity
+    return render(request, 'order_complete.html', { 'order_products': order_products })

@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Shopping Basket
+    Order Complete
 {% endblock %}
 
 {% block content %}
     <h1 class="title">
-        Shopping Basket
+        Order Complete
     </h1>
     <br>
     <div class="container">
-    {% for product, quantity in sb_products.items %}
+    {% for product, quantity in order_products.items %}
         <p class="subtitle">
             Quantity: {{ quantity }}<br>
             Name: {{ product.name }}<br>
@@ -20,9 +20,5 @@
             <img src="{{ product.picture.url }}"><br>
         </p>
     {% endfor %}
-    </div>
-    <br>
-    <div class="container">
-            <a href="/checkout" class="button">CHECKOUT</a>
     </div>
 {% endblock %}
