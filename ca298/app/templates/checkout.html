@@ -1,26 +1,14 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Shopping Basket
+    Checkout
 {% endblock %}
 
 {% block content %}
     <h1 class="title">
-        Shopping Basket
+        Checkout
     </h1>
     <br>
-    <div class="container">
-        {% for product, quantity in sb_products.items %}
-            <p class="subtitle">
-                Quantity: {{ quantity }}<br>
-                Name: {{ product.name }}<br>
-                Description: {{ product.description }}<br>
-                Price: {{ product.price }}<br>
-                Category: {{ product.category.name }}<br>
-                <img src="{{ product.picture.url }}"><br>
-            </p>
-        {% endfor %}
-    </div>
     <div class="container">
         <p class="subtitle">
             <form action="/checkout/" method="POST" enctype="multipart/form-data">
