@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
+    'django_extensions',
+    'django.contrib.sitemaps',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +129,8 @@ AUTH_USER_MODEL = "app.CaUser"
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/"
+
+GRAPH_MODELS = {
+    'all_applications': True,
+    'group_models': True,
+}
