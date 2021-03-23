@@ -14,12 +14,16 @@
     <br>
     <div class="container">
         <p class="subtitle">
-            <a href="/product/{{ product.id }}"><strong>{{ product.name }}</strong></a><br>
-            Description: {{ product.description }}<br>
-            Category: {{ product.category.name }}<br>
-            Price: {{ product.price }}<br><br>
-            <a href="/addbasket/{{ product.id }}" class="button">ADD TO BASKET</a><br><br>
-            <img src="{{ product.picture.url }}"><br>
+            {% if does_not_exist %}
+                Product does not exist!
+            {% else %}
+                <a href="/product/{{ product.id }}"><strong>{{ product.name }}</strong></a><br>
+                Description: {{ product.description }}<br>
+                Category: {{ product.category.name }}<br>
+                Price: {{ product.price }}<br><br>
+                <a href="/addbasket/{{ product.id }}" class="button">ADD TO BASKET</a><br><br>
+                <img src="{{ product.picture.url }}"><br>
+            {% endif %}
         </p>
     </div>
 {% endblock %}

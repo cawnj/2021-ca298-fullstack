@@ -59,8 +59,11 @@ def products(request):
 
 
 def single_product(request, product_id):
-    product = get_object_or_404(Product, pk=product_id)
-    return render(request, 'single_product.html', { 'product': product })
+    does_not_exist = False
+    product = Product.objects.filter(pk=product_id).first()
+    if not product:
+        does_not_exist = True
+    return render(request, 'single_product.html', { 'product': product, 'does_not_exist': does_not_exist })
 
 
 @login_required
@@ -68,9 +71,11 @@ def single_product(request, product_id):
 def product_form(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            new_product = form.save()
-            return redirect('/product/' + str(new_product.id))
+        if not form.is_valid():
+            return HttpResponse("invalid form!")
+        new_product = form.save()
+        return redirect('/product/' + str(new_product.id))
+
     else:
         form = ProductForm()
         return render(request, 'product_form.html', { 'form': form })
@@ -86,7 +91,7 @@ def add_to_basket(request, product_id):
     try:
         product = Product.objects.get(pk=product_id)
     except ObjectDoesNotExist:
-        return HttpResponse("Invalid product id")
+        return render(request, 'single_product.html', { 'does_not_exist': True })
     sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id, product_id=product.id).first()
     if not sbi:
         sbi = ShoppingBasketItems(basket_id=shopping_basket.id, product_id=product.id).save()
