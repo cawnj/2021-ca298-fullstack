@@ -20,6 +20,13 @@
             <a href="/login">Login</a>
         {% endif %}
 
+        {% if user.is_admin or user.is_superuser %}
+            <br>
+            <a href="/admin">Admin</a>
+            <a href="/productform">ProductForm</a>
+            <a href="/adminsignup">AdminSignup</a>
+        {% endif %}
+
         {% block content %}
         {% endblock %}
     </div>

@@ -12,10 +12,11 @@
     <div class="container">
     {% for product in products %}
         <p class="subtitle">
-            Name: {{ product.name }}<br>
+            <a href="/product/{{ product.id }}">{{ product.name }}</a><br>
             Description: {{ product.description }}<br>
-            Price: {{ product.price }}<br>
             Category: {{ product.category.name }}<br>
+            Price: {{ product.price }}<br><br>
+            <a href="/addbasket/{{ product.id }}" class="button">ADD TO BASKET</a><br><br>
             <img src="{{ product.picture.url }}"><br>
         </p>
     {% endfor %}
