@@ -52,10 +52,6 @@ def index(request):
     return render(request, 'index.html')
 
 
-def register(request):
-    return HttpResponse("Hello from register page")
-
-
 def products(request):
     all_products = Product.objects.all()
     return render(request, 'products.html', { 'products': all_products })
@@ -99,13 +95,17 @@ def add_to_basket(request, product_id):
 
 @login_required
 def view_basket(request):
-    shopping_basket = ShoppingBasket.objects.filter(user_id=request.user.id).first()
-    shopping_basket_items = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
+    is_empty = False
     sb_products = {}
-    for item in shopping_basket_items:
-        product = Product.objects.filter(id=item.product_id).first()
-        sb_products[product] = item.quantity
-    return render(request, 'shopping_basket.html', { 'sb_products': sb_products })
+    shopping_basket = ShoppingBasket.objects.filter(user_id=request.user.id).first()
+    if shopping_basket:
+        shopping_basket_items = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
+        for item in shopping_basket_items:
+            product = Product.objects.filter(id=item.product_id).first()
+            sb_products[product] = item.quantity
+    if not shopping_basket or len(sb_products) == 0:
+        is_empty = True
+    return render(request, 'shopping_basket.html', { 'sb_products': sb_products, 'empty': is_empty })
 
 
 @login_required

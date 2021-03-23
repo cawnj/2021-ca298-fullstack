@@ -10,19 +10,25 @@
     </h1>
     <br>
     <div class="container">
-    {% for product, quantity in sb_products.items %}
-        <p class="subtitle">
-            Quantity: {{ quantity }}<br>
-            Name: {{ product.name }}<br>
-            Description: {{ product.description }}<br>
-            Price: {{ product.price }}<br>
-            Category: {{ product.category.name }}<br>
-            <img src="{{ product.picture.url }}"><br>
-        </p>
-    {% endfor %}
-    </div>
-    <br>
-    <div class="container">
-            <a href="/checkout" class="button">CHECKOUT</a>
+        {% if empty %}
+            <p class="subtitle">
+                Your shopping basket is empty.
+            </p>
+        {% else %}
+            <div class="container">
+                <a href="/checkout" class="button">CHECKOUT</a>
+            </div>
+            <br>
+            <p class="subtitle">
+                {% for product, quantity in sb_products.items %}
+                Quantity: {{ quantity }}<br>
+                Name: {{ product.name }}<br>
+                Description: {{ product.description }}<br>
+                Price: {{ product.price }}<br>
+                Category: {{ product.category.name }}<br><br>
+                <img src="{{ product.picture.url }}"><br>
+                {% endfor %}
+            </p>
+        {% endif %}
     </div>
 {% endblock %}

@@ -10,10 +10,13 @@
     <section class="section">
     <div class="container">
         <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/basket">Basket</a>
 
         {% if user.is_authenticated %}
             <a href="/logout">Logout</a>
         {% else %}
+            <a href="/register">Register</a>
             <a href="/login">Login</a>
         {% endif %}
 
