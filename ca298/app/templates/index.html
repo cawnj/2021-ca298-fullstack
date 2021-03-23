@@ -6,19 +6,14 @@
 {% endblock %}
 
 {% block content %}
+    <h1 class="title">
+            To the moon!
+    </h1>
+
     {% if user.is_authenticated %}
-        <h1 class="title">
+        <p class="subtitle">
             Hello {{ user.username }}!
-        </h1>
-    {% else %}
-        <h1 class="title">
-            Hello world!
-        </h1>
+        </p>
     {% endif %}
-
-    <p class="subtitle">
-        My first website with <strong>Bulma</strong>!
-    </p>
-
     <img src="{% static '/img/linus.jpg' %}">
 {% endblock %}
