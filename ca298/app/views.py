@@ -7,6 +7,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from .permissions import admin_required
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 
@@ -81,9 +82,11 @@ def add_to_basket(request, product_id):
     shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
     if not shopping_basket:
         shopping_basket = ShoppingBasket(user_id=user.id).save()
-    # TODO: handle product id gracefully
     shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
-    product = Product.objects.get(pk=product_id)
+    try:
+        product = Product.objects.get(pk=product_id)
+    except ObjectDoesNotExist:
+        return HttpResponse("Invalid product id")
     sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id, product_id=product.id).first()
     if not sbi:
         sbi = ShoppingBasketItems(basket_id=shopping_basket.id, product_id=product.id).save()
@@ -132,8 +135,8 @@ def checkout(request):
 
 @login_required
 def order_complete(request, order_id):
-    order_items = OrderItems.objects.filter(order_id=order_id)
     order_products = {}
+    order_items = OrderItems.objects.filter(order_id=order_id)
     for item in order_items:
         product = Product.objects.filter(id=item.product_id).first()
         order_products[product] = item.quantity
