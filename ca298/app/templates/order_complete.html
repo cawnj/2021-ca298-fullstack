@@ -10,15 +10,21 @@
     </h1>
     <br>
     <div class="container">
-    {% for product, quantity in order_products.items %}
+    {% if does_not_exist %}
         <p class="subtitle">
-            Quantity: {{ quantity }}<br>
-            Name: {{ product.name }}<br>
-            Description: {{ product.description }}<br>
-            Price: {{ product.price }}<br>
-            Category: {{ product.category.name }}<br>
-            <img src="{{ product.picture.url }}"><br>
+            Order does not exist!
         </p>
-    {% endfor %}
+    {% else %}
+        {% for product, quantity in order_products.items %}
+            <p class="subtitle">
+                Quantity: {{ quantity }}<br>
+                Name: {{ product.name }}<br>
+                Description: {{ product.description }}<br>
+                Price: {{ product.price }}<br>
+                Category: {{ product.category.name }}<br>
+                <img src="{{ product.picture.url }}"><br>
+            </p>
+        {% endfor %}
+    {% endif %}
     </div>
 {% endblock %}

@@ -10,12 +10,18 @@
     </h1>
     <br>
     <div class="container">
-        <p class="subtitle">
-            <form action="/checkout/" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_table }}
-                <input type="submit" value="Submit">
-            </form>
-        </p>
+        {% if empty %}
+            <p class="subtitle">
+                Your shopping basket is empty.
+            </p>
+        {% else %}
+            <p class="subtitle">
+                <form action="/checkout/" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_table }}
+                    <input type="submit" value="Submit">
+                </form>
+            </p>
+        {% endif %}
     </div>
 {% endblock %}

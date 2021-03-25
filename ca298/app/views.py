@@ -134,15 +134,22 @@ def checkout(request):
         shopping_basket.delete()
         return redirect('/order_complete/' + str(order.id))
     else:
+        empty = False
+        shopping_basket = ShoppingBasket.objects.filter(user_id=request.user.id).first()
+        if not shopping_basket:
+            empty = True
         form = OrderForm()
-        return render(request, 'checkout.html', { 'form': form })
+        return render(request, 'checkout.html', { 'form': form, 'empty': empty })
 
 
 @login_required
 def order_complete(request, order_id):
+    does_not_exist = False
     order_products = {}
     order_items = OrderItems.objects.filter(order_id=order_id)
+    if len(order_items) == 0:
+        does_not_exist = True
     for item in order_items:
         product = Product.objects.filter(id=item.product_id).first()
         order_products[product] = item.quantity
-    return render(request, 'order_complete.html', { 'order_products': order_products })
+    return render(request, 'order_complete.html', { 'order_products': order_products, 'does_not_exist': does_not_exist })
