@@ -1,6 +1,12 @@
 from django.urls import path
 from . import views
 from .forms import *
+from .views import *
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'products', ProductViewSet)
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -15,4 +21,5 @@ urlpatterns = [
     path('basket/', views.view_basket, name="view_basket"),
     path('checkout/', views.checkout, name="checkout"),
     path('order_complete/<int:order_id>', views.order_complete, name="order_complete"),
+    path('api/', include(router.urls))
 ]

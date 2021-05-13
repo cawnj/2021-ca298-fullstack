@@ -8,6 +8,10 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from .permissions import admin_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.core import serializers
+from rest_framework import viewsets
+from .serializers import *
+
 
 # Create your views here.
 
@@ -55,7 +59,12 @@ def index(request):
 
 def products(request):
     all_products = Product.objects.all()
-    return render(request, 'products.html', { 'products': all_products })
+    flag = request.GET.get('format', '')
+    if flag == "json":
+        serialized_products = serializers.serialize("json", all_products)
+        return HttpResponse(serialized_products, content_type="application/json")
+    else:
+        return render(request, 'products.html', { 'products': all_products })
 
 
 def single_product(request, product_id):
@@ -153,3 +162,13 @@ def order_complete(request, order_id):
         product = Product.objects.filter(id=item.product_id).first()
         order_products[product] = item.quantity
     return render(request, 'order_complete.html', { 'order_products': order_products, 'does_not_exist': does_not_exist })
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = CaUser.objects.all()
+    serializer_class = UserSerializer
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer

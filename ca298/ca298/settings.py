@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'app',
     #'django_extensions',
     #'django.contrib.sitemaps',
@@ -133,4 +134,10 @@ LOGIN_REDIRECT_URL = "/"
 GRAPH_MODELS = {
     'all_applications': True,
     'group_models': True,
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
 }
