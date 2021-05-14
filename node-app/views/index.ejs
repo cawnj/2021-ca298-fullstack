@@ -7,5 +7,10 @@
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+    <script>
+      fetch("http://localhost:8000/api/products/?format=json") // make request
+      .then(response => response.json()) // get json data
+      .then(data => console.log(data)); // log json data
+    </script>
   </body>
 </html>
