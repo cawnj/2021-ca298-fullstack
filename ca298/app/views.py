@@ -96,7 +96,7 @@ def add_to_basket(request, product_id):
     shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
     if not shopping_basket:
         shopping_basket = ShoppingBasket(user_id=user.id).save()
-    shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
+        shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
     try:
         product = Product.objects.get(pk=product_id)
     except ObjectDoesNotExist:
@@ -172,3 +172,5 @@ class UserViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    authentication_classes = []
+    permission_classes = []

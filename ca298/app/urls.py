@@ -3,6 +3,7 @@ from . import views
 from .forms import *
 from .views import *
 from rest_framework import routers
+from rest_framework.authtoken.views import obtain_auth_token
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -21,5 +22,6 @@ urlpatterns = [
     path('basket/', views.view_basket, name="view_basket"),
     path('checkout/', views.checkout, name="checkout"),
     path('order_complete/<int:order_id>', views.order_complete, name="order_complete"),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls), name="api"),
+    path('token/', obtain_auth_token, name="api_token_auth"),
 ]
