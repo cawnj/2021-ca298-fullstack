@@ -14,7 +14,7 @@
     <br>
     <div class="container">
         <p class="subtitle">
-            {% if does_not_exist %}
+            {% if not product %}
                 Product does not exist!
             {% else %}
                 <a href="/product/{{ product.id }}"><strong>{{ product.name }}</strong></a><br>

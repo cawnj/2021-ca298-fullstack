@@ -16,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authtoken.models import Token
 from django.http import JsonResponse
+import json
 
 
 # Create your views here.
@@ -73,11 +74,8 @@ def products(request):
 
 
 def single_product(request, product_id):
-    does_not_exist = False
     product = Product.objects.filter(pk=product_id).first()
-    if not product:
-        does_not_exist = True
-    return render(request, 'single_product.html', { 'product': product, 'does_not_exist': does_not_exist })
+    return render(request, 'single_product.html', { 'product': product })
 
 
 @login_required
@@ -98,6 +96,7 @@ def product_form(request):
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def add_to_basket(request, product_id):
+    flag = request.GET.get('format', '')
     user = request.user
     if user.is_anonymous:
         token = request.META.get('HTTP_AUTHORIZATION').split(" ")[1]
@@ -109,33 +108,45 @@ def add_to_basket(request, product_id):
     try:
         product = Product.objects.get(pk=product_id)
     except ObjectDoesNotExist:
-        return render(request, 'single_product.html', { 'does_not_exist': True })
+        if flag == "json":
+            return JsonResponse({'status': 'failed', 'reason': 'does-not-exist'})
+        else:
+            return render(request, 'single_product.html', {'product': None})
     sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id, product_id=product.id).first()
     if not sbi:
         sbi = ShoppingBasketItems(basket_id=shopping_basket.id, product_id=product.id).save()
     else:
         sbi.quantity += 1
         sbi.save()
-    flag = request.GET.get('format', '')
     if flag == "json":
-        return JsonResponse({'status': 'success', 'id': product_id})
+        return JsonResponse({'status': 'success', 'product-id': product_id})
     else:
         return render(request, 'single_product.html', { 'product': product, 'added': True })
 
 
-@login_required
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def view_basket(request):
-    is_empty = False
-    sb_products = {}
-    shopping_basket = ShoppingBasket.objects.filter(user_id=request.user.id).first()
-    if shopping_basket:
-        shopping_basket_items = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
-        for item in shopping_basket_items:
-            product = Product.objects.filter(id=item.product_id).first()
-            sb_products[product] = item.quantity
-    if not shopping_basket or len(sb_products) == 0:
-        is_empty = True
-    return render(request, 'shopping_basket.html', { 'sb_products': sb_products, 'empty': is_empty })
+    user = request.user
+    if user.is_anonymous:
+        token = request.META.get('HTTP_AUTHORIZATION').split(" ")[1]
+        user = Token.objects.get(key=token).user
+    shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
+    if not shopping_basket:
+        shopping_basket = ShoppingBasket(user_id=user.id).save()
+        shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
+    sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
+    flag = request.GET.get('format', '')
+    if flag == "json":
+        basket_array = []
+        for item in sbi:
+            basket_array.append({
+                'product': item.product.name,
+                'price': float(item.product.price),
+                'quantity': int(item.quantity)
+            })
+        return HttpResponse(json.dumps({'items': basket_array}), content_type="application/json")
+    return render(request, 'shopping_basket.html', { 'basket': shopping_basket, 'items': sbi })
 
 
 @login_required
@@ -156,25 +167,20 @@ def checkout(request):
         shopping_basket.delete()
         return redirect('/order_complete/' + str(order.id))
     else:
-        empty = False
-        shopping_basket = ShoppingBasket.objects.filter(user_id=request.user.id).first()
+        user = request.user
+        shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
         if not shopping_basket:
-            empty = True
+            shopping_basket = ShoppingBasket(user_id=user.id).save()
+            shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
+        sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
         form = OrderForm()
-        return render(request, 'checkout.html', { 'form': form, 'empty': empty })
+        return render(request, 'checkout.html', { 'form': form, 'items': sbi })
 
 
 @login_required
 def order_complete(request, order_id):
-    does_not_exist = False
-    order_products = {}
     order_items = OrderItems.objects.filter(order_id=order_id)
-    if len(order_items) == 0:
-        does_not_exist = True
-    for item in order_items:
-        product = Product.objects.filter(id=item.product_id).first()
-        order_products[product] = item.quantity
-    return render(request, 'order_complete.html', { 'order_products': order_products, 'does_not_exist': does_not_exist })
+    return render(request, 'order_complete.html', { 'items': order_items })
 
 
 class UserViewSet(viewsets.ModelViewSet):
