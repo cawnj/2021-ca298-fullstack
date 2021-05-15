@@ -12,6 +12,8 @@
         <td>Name</td>
         <td>Description</td>
         <td>Price</td>
+        <td>Image</td>
+        <td></td>
       </tr>
     </table>
 
@@ -45,8 +47,23 @@
           let price = document.createElement("td")
           price.innerHTML = element['price']
           newRow.appendChild(price)
-        })
-      })
+
+          let picturetd = document.createElement("td")
+          let picture = document.createElement("img")
+          picture.src = element['picture']
+          newRow.appendChild(picturetd)
+          picturetd.appendChild(picture)
+
+          let buttonContainer = document.createElement("td")
+          let button = document.createElement("button")
+          button.innerHTML = "Add to basket"
+          button.addEventListener('click', function() {
+            addToBasket(element['id'])
+          })
+          buttonContainer.appendChild(button)
+          newRow.appendChild(buttonContainer)
+        });
+      });
 
       // event listener for login form
       let loginform = document.getElementById("login-form")
@@ -63,8 +80,31 @@
           body: JSON.stringify({username:user, password:pass})
         })
         .then(response => response.json())
-        .then(data => console.log(data))
-      }, true)
+        .then(data => {
+          console.log(data);
+          window.token = data['token']
+        })
+      }, true);
+
+      // function to add product to basket via rest api
+      function addToBasket(productId) {
+        if (window.token) {
+          fetch(`http://localhost:8000/addbasket/${productId}?format=json`, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${window.token}`
+            }
+          })
+          .then(response => response.json())
+          .then(data => console.log(data));
+        }
+        else {
+          alert("Please log in to continue");
+        }
+      }
+
     </script>
   </body>
 </html>

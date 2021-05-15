@@ -11,6 +11,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from rest_framework import viewsets
 from .serializers import *
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authtoken.models import Token
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -90,9 +95,13 @@ def product_form(request):
         return render(request, 'product_form.html', { 'form': form })
 
 
-@login_required
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def add_to_basket(request, product_id):
     user = request.user
+    if user.is_anonymous:
+        token = request.META.get('HTTP_AUTHORIZATION').split(" ")[1]
+        user = Token.objects.get(key=token).user
     shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
     if not shopping_basket:
         shopping_basket = ShoppingBasket(user_id=user.id).save()
@@ -107,7 +116,11 @@ def add_to_basket(request, product_id):
     else:
         sbi.quantity += 1
         sbi.save()
-    return render(request, 'single_product.html', { 'product': product, 'added': True })
+    flag = request.GET.get('format', '')
+    if flag == "json":
+        return JsonResponse({'status': 'success', 'id': product_id})
+    else:
+        return render(request, 'single_product.html', { 'product': product, 'added': True })
 
 
 @login_required
