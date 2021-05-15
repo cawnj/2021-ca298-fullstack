@@ -43,6 +43,13 @@
           <td>Total</td>
         </tr>
       </table>
+      <form id="checkout-form" method="POST", action=".">
+        <label for="shipping_addr">Shipping Address</label>
+        <input type="text" name="shipping_addr" maxlength="500" placeholder="Shipping Address" id="shipping_addr">
+        <label for="shipping_addr">Payment Details</label>
+        <input type="text" name="payment_details" maxlength="16" placeholder="Shipping Address" id="payment_details">
+        <button id="checkout-button" type="submit">Checkout</button>
+      </form>
     </div>
 
 
@@ -178,6 +185,32 @@
         event.preventDefault()
         showBasket()
       })
+
+      // event listener for checkout form
+      let checkoutButton = document.getElementById("checkout-button")
+      checkoutButton.addEventListener("click", (event) => {
+        event.preventDefault()
+        let shipping_address = document.getElementById("shipping_addr").value
+        let payment_details = document.getElementById("payment_details").value
+        if (window.token) {
+          fetch("http://localhost:8000/checkout/?format=json", {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${window.token}`
+            },
+            body: JSON.stringify({shipping_addr:shipping_address, payment_details:payment_details})
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data)
+          })
+        }
+        else {
+          alert("Please log in to continue")
+        }
+      }, true)
 
     </script>
   </body>

@@ -17,6 +17,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authtoken.models import Token
 from django.http import JsonResponse
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
@@ -149,30 +150,53 @@ def view_basket(request):
     return render(request, 'shopping_basket.html', { 'basket': shopping_basket, 'items': sbi })
 
 
-@login_required
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+@csrf_exempt
 def checkout(request):
-    if request.method == 'POST':
-        form = OrderForm(request.POST)
-        if not form.is_valid():
-            return HttpResponse("invalid form!")
-        order = form.save(commit=False)
-        order.user_id = request.user.id
-        order.save()
+    flag = request.GET.get('format', '')
+    user = request.user
+    if user.is_anonymous:
+        token = request.META.get('HTTP_AUTHORIZATION').split(" ")[1]
+        user = Token.objects.get(key=token).user
+    shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
+    if not shopping_basket:
+        shopping_basket = ShoppingBasket(user_id=user.id).save()
+        shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
+    sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
+    if not sbi:
+        if flag == "json":
+            return JsonResponse({'status': 'failed', 'reason': 'empty-basket'})
+        else:
+            return render(request, 'checkout.html', {'items': None})
 
-        shopping_basket = ShoppingBasket.objects.filter(user_id=request.user.id).first()
+    if request.method == 'POST':
+        if not request.POST:
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+            form = OrderForm(body)
+        else:
+            form = OrderForm(request.POST)
+
+        if not form.is_valid():
+            if flag == "json":
+                return JsonResponse({'status': 'failed', 'reason': 'invalid-form', 'errors': form.errors})
+            else:
+                return HttpResponse("invalid form!")
+        order = form.save(commit=False)
+        order.user_id = user.id
+        order.save()
+        shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
         shopping_basket_items = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
         for item in shopping_basket_items:
             order_item = OrderItems(order_id=order.id, product_id=item.product_id, quantity=item.quantity)
             order_item.save()
         shopping_basket.delete()
-        return redirect('/order_complete/' + str(order.id))
+        if flag == "json":
+            return JsonResponse({'status': 'success', 'order-id': order.id})
+        else:
+            return redirect('/order_complete/' + str(order.id))
     else:
-        user = request.user
-        shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
-        if not shopping_basket:
-            shopping_basket = ShoppingBasket(user_id=user.id).save()
-            shopping_basket = ShoppingBasket.objects.filter(user_id=user.id).first()
-        sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
         form = OrderForm()
         return render(request, 'checkout.html', { 'form': form, 'items': sbi })
 
