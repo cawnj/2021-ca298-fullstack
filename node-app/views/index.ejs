@@ -12,63 +12,100 @@
     <!-- HTML stuff -->
     <!-- ---------- -->
 
+    
     <section id="title-section" class="section">
-      <div id="title-container" class="container">
-        <h1 class="title"><%= title %></h1>
-        <p class="subtitle">Welcome!</p>
+      <div id="title-container">
+        <img id="main-image" src="/images/rocket.png" class="image">
+        <h1 class="title is-1"><%= title %></h1>
+        <p class="subtitle is-4">Welcome!</p>
       </div>
     </section>
-
-    <section id="product-section" class="section">
-      <div id="product-container" class="container">
-        <table id="product-table">
-          <tr>
-            <td>Name</td>
-            <td>Description</td>
-            <td>Price</td>
-            <td>Image</td>
-            <td></td>
-          </tr>
-        </table>
-      </div>
-    </section>
-
-    <section id="login-section" class="section">
-      <div id="login-container" class="container">
-        <form id="login-form" method="POST", action=".">
-          <label for="username">Username</label>
-          <input id="form-username" name="username" type="text" placeholder="Your Username" required>
-          <label for="password">Password</label>
-          <input id="form-password" name="password" type="password" placeholder="Your Password" required>
-          <input type="submit" value="Login">
-        </form>
-      </div>
-    </section>
-
-    <section id="shopping-basket-section" class="section">
-      <div id="shopping-basket-container" class="container">
-        <button id="show-basket-button">Show basket</button>
-        <table id="shopping-basket-table">
-          <tr>
-            <td>Name</td>
-            <td>Price</td>
-            <td>Quanity</td>
-            <td>Total</td>
-          </tr>
-        </table>
+    
+    <br>
+    
+    <div class="columns">
+      <div class="column is-vcentered">
+        <section id="product-section" class="section box">
+          <div id="product-container" class="container content">
+            <table id="product-table" class="table is-hoverable">
+              <thead>
+                <td>Name</td>
+                <td>Description</td>
+                <td>Price</td>
+                <td>Image</td>
+                <td></td>
+              </thead>
+              <tbody id="product-table-body"></tbody>
+            </table>
+          </div>
+        </section>
       </div>
 
-      <div id="checkout-container" class="container">
-        <form id="checkout-form" method="POST", action=".">
-          <label for="shipping_addr">Shipping Address</label>
-          <input type="text" name="shipping_addr" maxlength="500" placeholder="Shipping Address" id="shipping_addr" required>
-          <label for="payment_details">Payment Details</label>
-          <input type="text" name="payment_details" maxlength="16" placeholder="Payment Details" id="payment_details" required>
-          <button id="checkout-button" type="submit">Checkout</button>
-        </form>
-      </div>
-    </section>
+      <div class="column is-vcentered is-one-quarter">
+        <section id="login-section" class="section box">
+          <div id="login-container" class="container">
+            <form id="login-form" method="POST", action=".">
+              
+              <div class="field">
+                <label for="username" class="label">Username</label>
+                <div class="control">
+                  <input id="form-username" name="username" type="text" placeholder="user" required class="input">
+                </div>
+              </div>
+              
+              <div class="field">
+                <label for="password" class="label">Password</label>
+                <div class="control">
+                  <input id="form-password" name="password" type="password" placeholder="**********" required class="input">
+                </div>
+              </div>
+              
+              <button id="login-button" type="submit" class="button is-primary">Login</button>
+              
+            </form>
+          </div>
+        </section>
 
+        <section id="shopping-basket-section" class="section is-hidden box">
+          <div id="shopping-basket-container" class="containercontent">
+            <h1 class="title is-4">Shopping Basket</h1>
+            <table id="shopping-basket-table" class="table is-hoverable">
+              <thead>
+                <td>Name</td>
+                <td>Price</td>
+                <td>Quanity</td>
+                <td>Total</td>
+              </thead>
+              <tbody id="shopping-basket-table-body"></tbody>
+            </table>
+          </div>
+
+          <br><br>
+
+          <div id="checkout-container" class="container">
+            <form id="checkout-form" method="POST", action=".">
+              
+              <div class="field">
+                <label for="shipping_addr" class="label">Shipping Address</label>
+                <div class="control">
+                  <input type="text" name="shipping_addr" maxlength="500" placeholder="123 Main Street" id="shipping_addr" required class="input">
+                </div>
+              </div>
+              
+              <div class="field">
+                <label for="payment_details" class="label">Payment Details</label>
+                <div class="control">
+                  <input type="text" name="payment_details" maxlength="16" placeholder="xxxxxxxxxxxxxxxx" id="payment_details" required class="input">
+                </div>
+              </div>
+              
+              <button id="checkout-button" type="submit" class="button is-primary">Checkout</button>
+
+            </form>
+          </div>
+        </section>
+      </div>
+    </div>
 
     <!-- -------- -->
     <!-- JS stuff -->
@@ -81,7 +118,7 @@
       .then(data => {
         console.log(data)
         data.forEach(element => {
-          let table = document.getElementById("product-table")
+          let table = document.getElementById("product-table-body")
           let newRow = document.createElement("tr")
           table.appendChild(newRow)
 
@@ -98,14 +135,19 @@
           newRow.appendChild(price)
 
           let picturetd = document.createElement("td")
+          let picturefigure = document.createElement("figure")
+          picturefigure.classList.add("image", "is-128x128")
           let picture = document.createElement("img")
+          picture.classList.add("is-rounded")
           picture.src = element['picture']
           newRow.appendChild(picturetd)
-          picturetd.appendChild(picture)
+          picturetd.appendChild(picturefigure)
+          picturefigure.appendChild(picture)
 
           let buttonContainer = document.createElement("td")
           let button = document.createElement("button")
           button.innerHTML = "Add to basket"
+          button.classList.add("button", "is-primary")
           button.addEventListener('click', function() {
             addToBasket(element['id'])
           })
@@ -132,6 +174,16 @@
         .then(data => {
           console.log(data)
           window.token = data['token']
+          if (window.token) {
+            let basketSection = document.getElementById("shopping-basket-section")
+            let loginSection = document.getElementById("login-section")
+            basketSection.classList.remove("is-hidden")
+            loginSection.classList.add("is-hidden")
+            showBasket()
+          }
+          else {
+            alert("Invalid login, please try again")
+          }
         })
       }, true)
 
@@ -148,6 +200,7 @@
           })
           .then(response => response.json())
           .then(data => console.log(data))
+          showBasket()
         }
         else {
           alert("Please log in to continue")
@@ -168,8 +221,11 @@
           .then(response => response.json())
           .then(data => {
             console.log(data)
+            let mainTotal = 0
+            let table = document.getElementById("shopping-basket-table-body")
+            table.innerHTML = ""
             data['items'].forEach(element => {
-              let table = document.getElementById("shopping-basket-table")
+              table = document.getElementById("shopping-basket-table-body")
               let newRow = document.createElement("tr")
               table.appendChild(newRow)
 
@@ -178,7 +234,7 @@
               newRow.appendChild(name)
 
               let price = document.createElement("td")
-              price.innerHTML = element['price']
+              price.innerHTML = parseFloat(element['price']).toFixed(2)
               newRow.appendChild(price)
 
               let quantity = document.createElement("td")
@@ -186,22 +242,27 @@
               newRow.appendChild(quantity)
 
               let total = document.createElement("td")
-              total.innerHTML = element['quantity'] * element['price']
+              total.innerHTML = parseFloat(element['price'] * element['quantity']).toFixed(2)
               newRow.appendChild(total)
+              mainTotal += parseFloat(total.innerHTML)
             })
+            console.log(mainTotal)
+            let newRow = document.createElement("tr")
+            table.appendChild(newRow)
+            for (let i = 0; i < 3; i++) {
+              newRow.appendChild(document.createElement("td"))
+            }
+            let mainTotalTd = document.createElement("td")
+            let strong = document.createElement("strong")
+            mainTotalTd.appendChild(strong)
+            strong.innerHTML = parseFloat(mainTotal).toFixed(2)
+            newRow.appendChild(mainTotalTd)
           })
         }
         else {
           alert("Please log in to continue")
         }
       }
-
-      // event listener for showBasket
-      let showBasketButton = document.getElementById("show-basket-button")
-      showBasketButton.addEventListener("click", (event) => {
-        event.preventDefault()
-        showBasket()
-      })
 
       // event listener for checkout form
       let checkoutButton = document.getElementById("checkout-button")
@@ -227,6 +288,8 @@
           .then(response => response.json())
           .then(data => {
             console.log(data)
+            form.reset()
+            showBasket()
           })
         }
         else {
