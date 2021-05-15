@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
@@ -10,48 +12,62 @@
     <!-- HTML stuff -->
     <!-- ---------- -->
 
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <section id="title-section" class="section">
+      <div id="title-container" class="container">
+        <h1 class="title"><%= title %></h1>
+        <p class="subtitle">Welcome!</p>
+      </div>
+    </section>
 
-    <div id="product-container">
-      <table id="product-table">
-        <tr>
-          <td>Name</td>
-          <td>Description</td>
-          <td>Price</td>
-          <td>Image</td>
-          <td></td>
-        </tr>
-      </table>
-    </div>
+    <section id="product-section" class="section">
+      <div id="product-container" class="container">
+        <table id="product-table">
+          <tr>
+            <td>Name</td>
+            <td>Description</td>
+            <td>Price</td>
+            <td>Image</td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+    </section>
 
-    <form id="login-form" method="POST", action=".">
-      <label for="username">Username</label>
-      <input id="form-username" name="username" type="text" placeholder="Your Username" required>
-      <label for="password">Password</label>
-      <input id="form-password" name="password" type="password" placeholder="Your Password" required>
-      <input type="submit" value="Login">
-    </form>
+    <section id="login-section" class="section">
+      <div id="login-container" class="container">
+        <form id="login-form" method="POST", action=".">
+          <label for="username">Username</label>
+          <input id="form-username" name="username" type="text" placeholder="Your Username" required>
+          <label for="password">Password</label>
+          <input id="form-password" name="password" type="password" placeholder="Your Password" required>
+          <input type="submit" value="Login">
+        </form>
+      </div>
+    </section>
 
-    <div id="shopping-basket-container">
-      <button id="show-basket-button">Show basket</button>
-      <table id="shopping-basket-table">
-        <tr>
-          <td>Name</td>
-          <td>Price</td>
-          <td>Quanity</td>
-          <td>Total</td>
-        </tr>
-      </table>
+    <section id="shopping-basket-section" class="section">
+      <div id="shopping-basket-container" class="container">
+        <button id="show-basket-button">Show basket</button>
+        <table id="shopping-basket-table">
+          <tr>
+            <td>Name</td>
+            <td>Price</td>
+            <td>Quanity</td>
+            <td>Total</td>
+          </tr>
+        </table>
+      </div>
 
-      <form id="checkout-form" method="POST", action=".">
-        <label for="shipping_addr">Shipping Address</label>
-        <input type="text" name="shipping_addr" maxlength="500" placeholder="Shipping Address" id="shipping_addr" required>
-        <label for="payment_details">Payment Details</label>
-        <input type="text" name="payment_details" maxlength="16" placeholder="Payment Details" id="payment_details" required>
-        <button id="checkout-button" type="submit">Checkout</button>
-      </form>
-    </div>
+      <div id="checkout-container" class="container">
+        <form id="checkout-form" method="POST", action=".">
+          <label for="shipping_addr">Shipping Address</label>
+          <input type="text" name="shipping_addr" maxlength="500" placeholder="Shipping Address" id="shipping_addr" required>
+          <label for="payment_details">Payment Details</label>
+          <input type="text" name="payment_details" maxlength="16" placeholder="Payment Details" id="payment_details" required>
+          <button id="checkout-button" type="submit">Checkout</button>
+        </form>
+      </div>
+    </section>
 
 
     <!-- -------- -->
